@@ -1,0 +1,144 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap');
+
+@theme {
+  --color-cyan: #00ffff;
+  --color-magenta: #ff00ff;
+  --color-dark: #050505;
+  
+  --font-pixel: "VT323", monospace;
+  --font-display: "Press Start 2P", system-ui;
+}
+
+@layer base {
+  body {
+    @apply bg-dark text-cyan font-pixel;
+    overflow-x: hidden;
+    background-image: 
+      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+      linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: auto;
+  }
+
+  body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(18, 16, 16, 0.1);
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+    animation: flicker 0.15s infinite;
+  }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.27861; }
+  5% { opacity: 0.34769; }
+  10% { opacity: 0.23604; }
+  15% { opacity: 0.90626; }
+  20% { opacity: 0.18128; }
+  25% { opacity: 0.83891; }
+  30% { opacity: 0.65583; }
+  35% { opacity: 0.57807; }
+  40% { opacity: 0.26559; }
+  45% { opacity: 0.84693; }
+  50% { opacity: 0.96019; }
+  55% { opacity: 0.08523; }
+  60% { opacity: 0.71313; }
+  65% { opacity: 0.09047; }
+  70% { opacity: 0.27036; }
+  75% { opacity: 0.81003; }
+  80% { opacity: 0.78376; }
+  85% { opacity: 0.64329; }
+  90% { opacity: 0.70046; }
+  95% { opacity: 0.21147; }
+  100% { opacity: 0.49198; }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.scanline {
+  width: 100%;
+  height: 100px;
+  z-index: 3;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(0, 0, 0, 0) 100%);
+  opacity: 0.1;
+  position: fixed;
+  bottom: 100%;
+  animation: scanline 10s linear infinite;
+}
+
+.glitch-border {
+  border: 2px solid var(--color-cyan);
+  box-shadow: 0 0 10px var(--color-cyan), inset 0 0 10px var(--color-cyan);
+  position: relative;
+}
+
+.glitch-border::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid var(--color-magenta);
+  animation: glitch-anim 2s infinite linear alternate-reverse;
+  pointer-events: none;
+}
+
+@keyframes glitch-anim {
+  0% { clip-path: inset(80% 0 0 0); transform: translate(-2px, -2px); }
+  20% { clip-path: inset(20% 0 60% 0); transform: translate(2px, 2px); }
+  40% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 2px); }
+  60% { clip-path: inset(0 0 80% 0); transform: translate(2px, -2px); }
+  80% { clip-path: inset(60% 0 20% 0); transform: translate(-2px, -2px); }
+  100% { clip-path: inset(10% 0 70% 0); transform: translate(2px, 2px); }
+}
+
+.magenta-text {
+  color: var(--color-magenta);
+  text-shadow: 2px 2px var(--color-cyan);
+}
+
+.cyan-text {
+  color: var(--color-cyan);
+  text-shadow: 2px 2px var(--color-magenta);
+}
+
+@keyframes noise {
+  0% { transform: translate(0,0) }
+  10% { transform: translate(-5%,-5%) }
+  20% { transform: translate(-10%,5%) }
+  30% { transform: translate(5%,-10%) }
+  40% { transform: translate(-5%,15%) }
+  50% { transform: translate(-10%,5%) }
+  60% { transform: translate(15%,0) }
+  70% { transform: translate(0,10%) }
+  80% { transform: translate(-15%,0) }
+  90% { transform: translate(10%,5%) }
+  100% { transform: translate(5%,0) }
+}
+
+.noise-overlay {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  width: 200%;
+  height: 200%;
+  background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat;
+  animation: noise .2s infinite;
+  opacity: .1;
+  z-index: 1;
+  pointer-events: none;
+}
