@@ -37,9 +37,16 @@ export const MusicPlayer: React.FC = () => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [volume, setVolume] = useState(0.7);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const currentTrack = DUMMY_TRACKS[currentTrackIndex];
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -75,6 +82,10 @@ export const MusicPlayer: React.FC = () => {
 
   const handleEnded = () => {
     handleSkipForward();
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(parseFloat(e.target.value));
   };
 
   return (
@@ -139,11 +150,24 @@ export const MusicPlayer: React.FC = () => {
         </button>
       </div>
 
-      <div className="flex items-center gap-2 mt-2 text-cyan/40 text-xs">
-        <Volume2 size={14} />
-        <div className="flex-grow h-1 bg-dark border border-cyan/10 overflow-hidden">
-          <div className="w-2/3 h-full bg-cyan/40" />
+      <div className="flex items-center gap-3 mt-2 text-cyan/60 text-xs group">
+        <Volume2 size={16} className="group-hover:text-cyan transition-colors" />
+        <div className="flex-grow relative h-4 flex items-center">
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volume}
+            onChange={handleVolumeChange}
+            className="w-full h-1 bg-dark border border-cyan/20 appearance-none cursor-pointer accent-cyan hover:border-cyan transition-all"
+          />
+          <div 
+            className="absolute left-0 h-1 bg-cyan pointer-events-none shadow-[0_0_8px_#00ffff]" 
+            style={{ width: `${volume * 100}%` }}
+          />
         </div>
+        <span className="w-8 text-right font-mono">{Math.round(volume * 100)}%</span>
       </div>
     </div>
   );

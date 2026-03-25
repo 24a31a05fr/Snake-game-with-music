@@ -31,6 +31,28 @@ export const SnakeGame: React.FC = () => {
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const [difficulty, setDifficulty] = useState<DifficultyKey>('MEDIUM');
 
+  const playSound = useCallback((frequency: number, type: OscillatorType = 'square', duration: number = 0.1) => {
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+      
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + duration);
+    } catch (e) {
+      console.error("Audio failed:", e);
+    }
+  }, []);
+
   useEffect(() => {
     const savedHighScore = localStorage.getItem('snakeHighScore');
     if (savedHighScore) {
@@ -82,6 +104,7 @@ export const SnakeGame: React.FC = () => {
         newHead.y >= GRID_SIZE ||
         prevSnake.some((segment) => segment.x === newHead.x && segment.y === newHead.y)
       ) {
+        playSound(150, 'sawtooth', 0.3);
         setIsGameOver(true);
         return prevSnake;
       }
@@ -90,6 +113,7 @@ export const SnakeGame: React.FC = () => {
 
       // Check food
       if (newHead.x === food.x && newHead.y === food.y) {
+        playSound(880, 'square', 0.1);
         setScore((s) => s + 10);
         setFood(generateFood(newSnake));
       } else {
@@ -175,6 +199,7 @@ export const SnakeGame: React.FC = () => {
   }, [snake, food]);
 
   const resetGame = () => {
+    playSound(440, 'square', 0.1);
     setSnake(INITIAL_SNAKE);
     setDirection(INITIAL_DIRECTION);
     setScore(0);
@@ -212,7 +237,6 @@ export const SnakeGame: React.FC = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-dark/90 backdrop-blur-sm p-4">
             {isGameOver ? (
               <>
-                <Skull className="text-magenta mb-4 animate-bounce" size={60} />
                 <h2 className="text-magenta font-display text-xl mb-4 magenta-text text-center">CORE_DUMPED</h2>
                 
                 <div className="flex flex-col gap-4 w-full max-w-[240px] mb-6">
