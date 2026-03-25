@@ -9,11 +9,16 @@ interface Point {
 const GRID_SIZE = 20;
 const INITIAL_SNAKE: Point[] = [
   { x: 10, y: 10 },
-  { x: 10, y: 11 },
-  { x: 10, y: 12 },
 ];
 const INITIAL_DIRECTION = 'UP';
-const SPEED = 150;
+
+const DIFFICULTIES = {
+  EASY: 200,
+  MEDIUM: 120,
+  HARD: 70,
+};
+
+type DifficultyKey = keyof typeof DIFFICULTIES;
 
 export const SnakeGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -23,6 +28,7 @@ export const SnakeGame: React.FC = () => {
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(true);
+  const [difficulty, setDifficulty] = useState<DifficultyKey>('MEDIUM');
 
   const generateFood = useCallback((currentSnake: Point[]) => {
     let newFood: Point;
@@ -95,9 +101,9 @@ export const SnakeGame: React.FC = () => {
   }, [direction]);
 
   useEffect(() => {
-    const interval = setInterval(moveSnake, SPEED);
+    const interval = setInterval(moveSnake, DIFFICULTIES[difficulty]);
     return () => clearInterval(interval);
-  }, [moveSnake]);
+  }, [moveSnake, difficulty]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -181,25 +187,71 @@ export const SnakeGame: React.FC = () => {
         />
         
         {(isGameOver || isPaused) && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-dark/90 backdrop-blur-sm">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-dark/90 backdrop-blur-sm p-4">
             {isGameOver ? (
               <>
-                <Skull className="text-magenta mb-6 animate-bounce" size={80} />
-                <h2 className="text-magenta font-display text-2xl mb-6 magenta-text text-center">CORE_DUMPED</h2>
-                <button
-                  onClick={resetGame}
-                  className="px-8 py-3 bg-magenta text-dark font-pixel font-bold text-xl hover:bg-cyan transition-colors glitch-border"
-                >
-                  REBOOT
-                </button>
+                <Skull className="text-magenta mb-4 animate-bounce" size={60} />
+                <h2 className="text-magenta font-display text-xl mb-4 magenta-text text-center">CORE_DUMPED</h2>
+                
+                <div className="flex flex-col gap-4 w-full max-w-[240px] mb-6">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-magenta font-pixel text-sm text-center uppercase tracking-widest">Select Difficulty</span>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(Object.keys(DIFFICULTIES) as DifficultyKey[]).map((level) => (
+                        <button
+                          key={level}
+                          onClick={() => setDifficulty(level)}
+                          className={`py-1 px-2 font-pixel text-xs border transition-all ${
+                            difficulty === level 
+                              ? 'bg-cyan text-dark border-cyan shadow-[0_0_10px_#00ffff]' 
+                              : 'bg-dark text-cyan border-cyan/30 hover:border-cyan'
+                          }`}
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3 w-full max-w-[200px]">
+                  <button
+                    onClick={resetGame}
+                    className="px-6 py-2 bg-magenta text-dark font-pixel font-bold text-lg hover:bg-cyan transition-colors glitch-border"
+                  >
+                    REBOOT
+                  </button>
+                </div>
               </>
             ) : (
               <>
-                <Pause className="text-cyan mb-6 animate-pulse" size={80} />
-                <h2 className="text-cyan font-display text-2xl mb-6 cyan-text text-center">WAIT_STATE</h2>
+                <Pause className="text-cyan mb-4 animate-pulse" size={60} />
+                <h2 className="text-cyan font-display text-xl mb-4 cyan-text text-center">WAIT_STATE</h2>
+                
+                <div className="flex flex-col gap-4 w-full max-w-[240px] mb-6">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-magenta font-pixel text-sm text-center uppercase tracking-widest">Select Difficulty</span>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(Object.keys(DIFFICULTIES) as DifficultyKey[]).map((level) => (
+                        <button
+                          key={level}
+                          onClick={() => setDifficulty(level)}
+                          className={`py-1 px-2 font-pixel text-xs border transition-all ${
+                            difficulty === level 
+                              ? 'bg-cyan text-dark border-cyan shadow-[0_0_10px_#00ffff]' 
+                              : 'bg-dark text-cyan border-cyan/30 hover:border-cyan'
+                          }`}
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
                 <button
                   onClick={() => setIsPaused(false)}
-                  className="px-8 py-3 bg-cyan text-dark font-pixel font-bold text-xl hover:bg-magenta transition-colors glitch-border"
+                  className="px-8 py-3 bg-cyan text-dark font-pixel font-bold text-xl hover:bg-magenta transition-colors glitch-border w-full max-w-[200px]"
                 >
                   RESUME
                 </button>
