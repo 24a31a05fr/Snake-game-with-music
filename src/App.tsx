@@ -19,8 +19,8 @@ export default function App() {
       >
         <div className="flex items-center justify-center gap-3 mb-2">
           <Zap className="text-cyan animate-pulse" size={32} />
-          <h1 className="text-4xl md:text-7xl font-display font-bold tracking-tighter cyan-text">
-            SYSTEM <span className="magenta-text">FAILURE</span>
+          <h1 className="text-4xl md:text-7xl font-display font-bold tracking-tighter cyan-text glitch-text">
+            NEON <span className="magenta-text">SNAKE</span>
           </h1>
           <Zap className="text-magenta animate-pulse" size={32} />
         </div>

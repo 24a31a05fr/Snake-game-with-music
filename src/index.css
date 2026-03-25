@@ -114,6 +114,18 @@
   text-shadow: 2px 2px var(--color-magenta);
 }
 
+@keyframes text-glitch {
+  0% { transform: translate(0); text-shadow: 2px 2px var(--color-magenta), -2px -2px var(--color-cyan); }
+  25% { transform: translate(-2px, 1px); text-shadow: -2px -2px var(--color-magenta), 2px 2px var(--color-cyan); }
+  50% { transform: translate(2px, -1px); text-shadow: 2px -2px var(--color-magenta), -2px 2px var(--color-cyan); }
+  75% { transform: translate(-1px, -2px); text-shadow: -2px 2px var(--color-magenta), 2px -2px var(--color-cyan); }
+  100% { transform: translate(0); text-shadow: 2px 2px var(--color-magenta), -2px -2px var(--color-cyan); }
+}
+
+.glitch-text {
+  animation: text-glitch 0.2s infinite;
+}
+
 @keyframes noise {
   0% { transform: translate(0,0) }
   10% { transform: translate(-5%,-5%) }
