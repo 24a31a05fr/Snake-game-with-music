@@ -27,8 +27,23 @@ export const SnakeGame: React.FC = () => {
   const [direction, setDirection] = useState<string>(INITIAL_DIRECTION);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
+  const [highScore, setHighScore] = useState<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const [difficulty, setDifficulty] = useState<DifficultyKey>('MEDIUM');
+
+  useEffect(() => {
+    const savedHighScore = localStorage.getItem('snakeHighScore');
+    if (savedHighScore) {
+      setHighScore(parseInt(savedHighScore, 10));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (score > highScore) {
+      setHighScore(score);
+      localStorage.setItem('snakeHighScore', score.toString());
+    }
+  }, [score, highScore]);
 
   const generateFood = useCallback((currentSnake: Point[]) => {
     let newFood: Point;
@@ -169,12 +184,19 @@ export const SnakeGame: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="flex justify-between w-full max-w-[400px] px-4 items-center font-pixel">
-        <div className="text-cyan text-3xl cyan-text tracking-tighter">
-          SCORE: {score}
+      <div className="flex flex-col w-full max-w-[400px] gap-2">
+        <div className="flex justify-between px-4 items-center font-pixel">
+          <div className="text-cyan text-3xl cyan-text tracking-tighter">
+            SCORE: {score}
+          </div>
+          <div className="text-magenta text-3xl magenta-text tracking-tighter">
+            {isGameOver ? 'HALT' : isPaused ? 'IDLE' : 'RUN'}
+          </div>
         </div>
-        <div className="text-magenta text-3xl magenta-text tracking-tighter">
-          {isGameOver ? 'HALT' : isPaused ? 'IDLE' : 'RUN'}
+        <div className="flex justify-center px-4 items-center font-pixel">
+          <div className="text-cyan/60 text-xl cyan-text tracking-tighter opacity-70">
+            HIGH_SCORE: {highScore}
+          </div>
         </div>
       </div>
 
